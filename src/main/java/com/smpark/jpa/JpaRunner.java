@@ -1,5 +1,7 @@
 package com.smpark.jpa;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -20,25 +22,21 @@ public class JpaRunner implements ApplicationRunner {
 	public void run(ApplicationArguments args) throws Exception {
 		Post post = new Post();
 		post.setTitle("Spring Data JPA 언제 보나...");
-		
+
 		Comment comment = new Comment();
 		comment.setComment("빨리 보고 싶어요.");
 		post.addComment(comment);
-		
+
 		Comment comment1 = new Comment();
 		comment1.setComment("곧 보여드릴게요.");
 		post.addComment(comment1);
-		
+
 		Session session = entityManager.unwrap(Session.class);
 		session.save(post);
-		Post getPost = session.get(Post.class, 1l);
-		System.out.println("=====================");
-		System.out.println(getPost.getTitle());
 		
-		getPost.getComments().forEach(c -> {
-			System.out.println("=====================");
-			System.out.println(c.getComment());
-		});
+		
+		List<Post> posts = entityManager.createNativeQuery("select * from post", Post.class).getResultList();
+		posts.forEach(System.out::println);
 	}
 	
 }
