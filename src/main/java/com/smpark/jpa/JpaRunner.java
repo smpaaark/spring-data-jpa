@@ -1,11 +1,6 @@
 package com.smpark.jpa;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -15,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class JpaRunner implements ApplicationRunner {
 
-	@PersistenceContext
-	EntityManager entityManager;
+	@Autowired
+	PostRepository postRepository;
 	
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
@@ -31,12 +26,8 @@ public class JpaRunner implements ApplicationRunner {
 		comment1.setComment("곧 보여드릴게요.");
 		post.addComment(comment1);
 
-		Session session = entityManager.unwrap(Session.class);
-		session.save(post);
-		
-		
-		List<Post> posts = entityManager.createNativeQuery("select * from post", Post.class).getResultList();
-		posts.forEach(System.out::println);
+		postRepository.save(post);
+		postRepository.findAll().forEach(System.out::println);
 	}
 	
 }
